@@ -33,6 +33,6 @@ resource "symbiosis_node_pool" "development" {
   cluster = symbiosis_cluster.development.name
 
   node_type = "general-3"
-  quantity  = 4
+  quantity  = 3
   name      = "development-pool"
 }
