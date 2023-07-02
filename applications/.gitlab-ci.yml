@@ -24,6 +24,6 @@ deploy_job:
     - mkdir -p $HOME/.kube
     - echo $KUBECONFIG | base64 -d > $HOME/.kube/config
     - COSMOLOGY_VERSION=$(yq -r '.metadata.version' zarf.yaml)
-    - zarf package deploy oci://$CI_REGISTRY_IMAGE/development:$COSMOLOGY_VERSION.$CI_PIPELINE_IID-amd64 --confirm
+    - zarf package deploy oci://$CI_REGISTRY_IMAGE/cosmology:$COSMOLOGY_VERSION.$CI_PIPELINE_IID-amd64 --confirm
   rules:
     - when: manual
