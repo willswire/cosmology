@@ -13,10 +13,6 @@ neuvector:
 tempo:
   enabled: false
 
-######################
-## CHAINGUARD MAGIC ##
-######################
-
 # Kyverno image replacement
 kyverno:
   values:
