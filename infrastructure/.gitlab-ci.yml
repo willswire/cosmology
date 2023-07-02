@@ -16,6 +16,7 @@ stages:
 
 variables:
   TF_STATE_NAME: development
+  TF_ROOT: infrastructure
 
 fmt:
   extends: .terraform:fmt

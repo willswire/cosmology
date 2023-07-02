@@ -17,22 +17,22 @@ provider "symbiosis" {
 }
 
 provider "kubernetes" {
-  host = "https://${symbiosis_cluster.cosmology.endpoint}"
+  host = "https://${symbiosis_cluster.development.endpoint}"
 
-  client_certificate     = symbiosis_cluster.cosmology.certificate
-  client_key             = symbiosis_cluster.cosmology.private_key
-  cluster_ca_certificate = symbiosis_cluster.cosmology.ca_certificate
+  client_certificate     = symbiosis_cluster.development.certificate
+  client_key             = symbiosis_cluster.development.private_key
+  cluster_ca_certificate = symbiosis_cluster.development.ca_certificate
 }
 
-resource "symbiosis_cluster" "cosmology" {
-  name   = "cosmology"
+resource "symbiosis_cluster" "development" {
+  name   = "development"
   region = "germany-1"
 }
 
-resource "symbiosis_node_pool" "cosmology" {
-  cluster = symbiosis_cluster.cosmology.name
+resource "symbiosis_node_pool" "development" {
+  cluster = symbiosis_cluster.development.name
 
   node_type = "general-3"
   quantity  = 4
-  name      = "cosmology-pool"
+  name      = "development-pool"
 }
