@@ -1,0 +1,69 @@
+{{- $fluxSettingsGitlabRunner := merge .Values.addons.gitlabRunner.flux .Values.flux -}}
+{{- if .Values.addons.gitlabRunner.enabled }}
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: gitlab-runner
+  namespace: {{ .Release.Namespace }}
+spec:
+  targetNamespace: gitlab-runner
+  releaseName: gitlab-runner
+  chart:
+    spec:
+      {{- if eq .Values.addons.gitlabRunner.sourceType "git" }}
+      chart: {{ .Values.addons.gitlabRunner.git.path }}
+      sourceRef:
+        kind: GitRepository
+        name: gitlab-runner
+        namespace: {{ .Release.Namespace }}
+      {{- else }}
+      chart: {{ .Values.addons.gitlabRunner.helmRepo.chartName }}
+      version: {{ .Values.addons.gitlabRunner.helmRepo.tag }}
+      sourceRef:
+        kind: HelmRepository
+        name: {{ .Values.addons.gitlabRunner.helmRepo.repoName }}
+        namespace: {{ .Release.Namespace }}
+      {{- end }}
+      interval: 5m
+
+  {{- toYaml $fluxSettingsGitlabRunner | nindent 2 }}
+
+  {{- if .Values.addons.gitlabRunner.postRenderers }}
+  postRenderers:
+  {{ toYaml .Values.addons.gitlabRunner.postRenderers | nindent 4 }}
+  {{- end }}
+  valuesFrom:
+    - name: {{ .Release.Name }}-gitlab-runner-values
+      kind: Secret
+      valuesKey: "common"
+    - name: {{ .Release.Name }}-gitlab-runner-values
+      kind: Secret
+      valuesKey: "defaults"
+    - name: {{ .Release.Name }}-gitlab-runner-values
+      kind: Secret
+      valuesKey: "overlays"
+
+  {{- if or .Values.gatekeeper.enabled .Values.kyvernoPolicies.enabled .Values.monitoring.enabled .Values.addons.gitlab.enabled }}
+  dependsOn:
+    {{- if .Values.gatekeeper.enabled }}
+    - name: gatekeeper
+      namespace: {{ .Release.Namespace }}
+    {{- end }}
+    {{- if .Values.kyverno.enabled }}
+    - name: kyverno
+      namespace: {{ .Release.Namespace }}
+    {{- end }}
+    {{- if .Values.kyvernoPolicies.enabled }}
+    - name: kyverno-policies
+      namespace: {{ .Release.Namespace }}
+    {{- end }}
+    {{- if .Values.monitoring.enabled }}
+    - name: monitoring
+      namespace: {{ .Release.Namespace }}
+    {{- end }}
+    {{- if .Values.addons.gitlab.enabled }}
+    - name: gitlab
+      namespace: {{ .Release.Namespace }}
+    {{- end }}
+  {{- end }}
+{{- end }}
