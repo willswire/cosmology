@@ -2,6 +2,7 @@ stages:
   - trigger
 
 infrastructure:
+  stage: trigger
   trigger:
     include:
       - local: infrastructure/.gitlab-ci.yml
