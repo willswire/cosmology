@@ -1,6 +1,13 @@
 stages:
   - trigger
 
+variables:
+  PIPELINE_TYPE:
+    value: ''
+    options:
+      - ''
+      - 'infrastructure'
+
 infrastructure:
   stage: trigger
   trigger:
@@ -9,3 +16,4 @@ infrastructure:
   rules:
     - changes: 
         - infrastructure/**/*
+    - if: $PIPELINE_TYPE == "infrastructure"
