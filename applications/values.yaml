@@ -1,0 +1,101 @@
+# Needed for Iron Bank images and default Big Bang packages; set at deploy time 
+registryCredentials:
+  registry: registry1.dso.mil
+  username: "###ZARF_VAR_REGISTRY1_USERNAME###"
+  password: "###ZARF_VAR_REGISTRY1_CLI_SECRET###"
+  email: ""
+
+# Neuvector deployment bug fixed in later version of Big Bang; we pin to v2.0.0
+neuvector:
+  enabled: false
+
+# Tempo is the "straw that broke the camel's back" for my pay-to-play cluster ):
+tempo:
+  enabled: false
+
+######################
+## CHAINGUARD MAGIC ##
+######################
+
+# Kyverno image replacement
+kyverno:
+  values:
+    initImage:
+      registry: cgr.dev
+      repository: chainguard/kyvernopre
+      tag: latest
+
+# Edit policies to allow using alternate registries, 'latest' tags, etc.
+kyvernoPolicies:
+  enabled: true
+  values:
+    policies:
+      disallow-image-tags:
+        validationFailureAction: audit
+      disallow-shared-subpath-volume-writes:
+        validationFailureAction: audit
+      restrict-host-ports:
+        validationFailureAction: audit
+      restrict-capabilities:
+        validationFailureAction: audit
+      restrict-image-registries:
+        validationFailureAction: audit
+      disallow-host-namespaces:
+        validationFailureAction: audit
+      disallow-privileged-containers:
+        validationFailureAction: audit
+      require-non-root-user:
+        validationFailureAction: audit
+      restrict-host-path-mount-pv:
+        validationFailureAction: audit
+
+# Monitoring image replacements
+monitoring:
+  values:
+    alertmanager:
+      alertmanagerSpec:
+        image:
+          repository: cgr.dev/chainguard/prometheus-alertmanager
+          tag: latest
+    grafana:
+      sidecar:
+        image:
+          registry: cgr.dev
+          repository: chainguard/k8s-sidecar
+          tag: latest
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+    kube-state-metrics:
+      image:
+        repository: cgr.dev/chainguard/kube-state-metrics
+        tag: latest
+    prometheus:
+      prometheusSpec:
+        image:
+          repository: cgr.dev/chainguard/prometheus
+          tag: latest
+    prometheusOperator:
+      image:
+        repository: cgr.dev/chainguard/prometheus-operator
+        tag: latest
+      prometheusConfigReloader:
+        image:
+          repository: cgr.dev/chainguard/prometheus-config-reloader
+          tag: latest
+    prometheus-node-exporter:
+      image:
+        repository: cgr.dev/chainguard/prometheus-node-exporter
+        tag: latest
+
+# Addons image replacements
+addons:
+  metricsServer:
+    values:
+      image:
+        repository: cgr.dev/chainguard/metrics-server
+        tag: latest

@@ -1,0 +1,74 @@
+{{- if .Values.addons.velero.enabled }}
+{{- include "values-secret" (dict "root" $ "package" .Values.addons.velero "name" "velero" "defaults" (include "bigbang.defaults.velero" .)) }}
+{{- end }}
+
+{{- define "bigbang.defaults.velero" -}}
+
+istio:
+  enabled: {{ .Values.istio.enabled }}
+
+{{- if .Values.istio.enabled }}
+podAnnotations:
+  {{ include "istioAnnotation" . }}
+{{- end }}
+
+monitoring:
+  enabled: {{ .Values.monitoring.enabled }}
+
+{{- if .Values.monitoring.enabled }}
+metrics:
+  enabled: true
+  scrapeInterval: 30s
+  scrapeTimeout: 10s
+  service:
+    annotations: {}
+    labels: {}
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8085"
+    prometheus.io/path: "/metrics"
+  serviceMonitor:
+    enabled: true
+    additionalLabels: {}
+    {{- if and .Values.istio.enabled (eq (dig "istio" "mtls" "mode" "STRICT" .Values.addons.velero.values) "STRICT") }}
+    scheme: https
+    tlsConfig:
+      caFile: /etc/prom-certs/root-cert.pem
+      certFile: /etc/prom-certs/cert-chain.pem
+      keyFile: /etc/prom-certs/key.pem
+      insecureSkipVerify: true  # Prometheus does not support Istio security naming, thus skip verifying target
+    {{- end }}
+  prometheusRule:
+    enabled: true
+{{- end }}
+
+networkPolicies:
+  enabled: {{ .Values.networkPolicies.enabled }}
+  controlPlaneCidr: {{ .Values.networkPolicies.controlPlaneCidr }}
+
+imagePullSecrets:
+- name: private-registry
+
+image:
+  pullPolicy: {{ .Values.imagePullPolicy }}
+
+{{- if eq (len .Values.addons.velero.plugins) 0 }}{{- fail "At least one plugin in '.Values.addons.velero.plugins' required. Supported values: aws, azure, csi" }}{{- end }}
+plugins:
+{{- range .Values.addons.velero.plugins }}
+{{- if eq . "aws" }}
+  aws:
+    enabled: true
+{{- end }}
+{{- if eq . "azure" }}
+  azure:
+    enabled: true
+{{- end }}
+{{- if eq . "csi" }}
+  csi:
+    enabled: true
+configuration:
+  features: EnableCSI
+{{- end }}
+{{- end }}
+
+{{- end -}}

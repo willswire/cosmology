@@ -1,0 +1,11 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+  name: flux
+upstream:
+  type: git
+  git:
+    commit: dbda8fbdb8b58ed1ee69343025a6091eae0d1828
+    repo: https://github.com/fluxcd/flux2
+    directory: /manifests/monitoring/monitoring-config/dashboards
+    ref: v0.41.2

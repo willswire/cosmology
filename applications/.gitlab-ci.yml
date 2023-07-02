@@ -1,0 +1,32 @@
+stages:
+  - build
+  - deploy
+
+default:
+  image: $CI_REGISTRY_IMAGE/toolbox:0.1
+  before_script:
+    - echo $REGISTRY1_CLI_SECRET | zarf tools registry login registry1.dso.mil --username $REGISTRY1_USERNAME --password-stdin
+    - echo $CI_REGISTRY_PASSWORD | zarf tools registry login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
+    - cd applications
+
+build_job:
+  stage: build
+  script:
+    - "yq -ir '.metadata.version += \"'\".$CI_PIPELINE_IID\"'\"' zarf.yaml"
+    - zarf package create --confirm
+    - zarf package publish zarf-package-*.tar.zst oci://$CI_REGISTRY_IMAGE
+
+deploy_job:
+  stage: deploy
+  environment: development
+  resource_group: development
+  script:
+    - echo $KUBECONFIG | base64 -d > $HOME/.kube/config
+    - COSMOLOGY_VERSION=$(yq -r '.metadata.version' zarf.yaml)
+    - zarf package deploy oci://$CI_REGISTRY_IMAGE/development:$COSMOLOGY_VERSION.$CI_PIPELINE_IID-amd64 --confirm
+  artifacts:
+    when: always
+    paths:
+      - zarf.log
+  rules:
+    - when: manual

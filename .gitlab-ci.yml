@@ -9,3 +9,12 @@ infrastructure:
   rules:
     - changes: 
         - infrastructure/**/*
+
+applications:
+  stage: trigger
+  trigger:
+    include:
+      - local: applications/.gitlab-ci.yml
+  rules:
+    - changes: 
+        - applications/**/*
