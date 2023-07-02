@@ -21,7 +21,7 @@ components:
     required: true
     extensions:
       bigbang:
-        version: 2.0.0
+        version: main
         repo: https://gitlab.com/willswire/cosmology.git
         valuesFiles:
           - values.yaml
