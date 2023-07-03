@@ -1,20 +1,45 @@
 stages:
   - trigger
 
+variables:
+  PIPELINE_NAME: Deploy
+  DEPLOY_INFRA:
+    value: ""
+    options:
+      - "true"
+    description: "Run the infrastructure child pipeline"
+  DEPLOY_APPS:
+    value: ""
+    options:
+      - "true"
+    description: "Run the applications child pipeline"
+
+workflow:
+  name: $PIPELINE_NAME
+
 infrastructure:
   stage: trigger
   trigger:
-    include:
-      - local: infrastructure/.gitlab-ci.yml
+    include: infrastructure/.gitlab-ci.yml
+    strategy: depend
   rules:
+    - if: $DEPLOY_INFRA
     - changes: 
         - infrastructure/**/*
+  variables:
+    PIPELINE_NAME: $PIPELINE_NAME Infrastructure
 
 applications:
   stage: trigger
+  needs:
+    - job: infrastructure
+      optional: true
   trigger:
-    include:
-      - local: applications/.gitlab-ci.yml
+    include: applications/.gitlab-ci.yml
+    strategy: depend
   rules:
+    - if: $DEPLOY_APPS
     - changes: 
         - applications/**/*
+  variables:
+    PIPELINE_NAME: $PIPELINE_NAME Applications
