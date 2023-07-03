@@ -4,13 +4,15 @@ stages:
 variables:
   PIPELINE_NAME: Deploy
   DEPLOY_INFRA:
-    value: ""
+    value: "false"
     options:
+      - "false"
       - "true"
     description: "Run the infrastructure child pipeline"
   DEPLOY_APPS:
-    value: ""
+    value: "false"
     options:
+      - "false"
       - "true"
     description: "Run the applications child pipeline"
 
@@ -23,7 +25,7 @@ infrastructure:
     include: infrastructure/.gitlab-ci.yml
     strategy: depend
   rules:
-    - if: $DEPLOY_INFRA
+    - if: '$DEPLOY_INFRA == "true"'
     - changes: 
         - infrastructure/**/*
   variables:
@@ -38,7 +40,7 @@ applications:
     include: applications/.gitlab-ci.yml
     strategy: depend
   rules:
-    - if: $DEPLOY_APPS
+    - if: '$DEPLOY_APPS == "true"'
     - changes: 
         - applications/**/*
   variables:
