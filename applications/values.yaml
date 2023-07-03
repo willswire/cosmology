@@ -20,6 +20,11 @@ kyverno:
       registry: cgr.dev
       repository: chainguard/kyverno
       tag: latest
+    extraArgs:
+      - --clientRateLimitQPS=25
+      - --clientRateLimitBurst=50
+      - --loggingFormat=text
+      - --exceptionNamespace={{ include "kyverno.namespace" . }}
     initImage:
       registry: cgr.dev
       repository: chainguard/kyvernopre
