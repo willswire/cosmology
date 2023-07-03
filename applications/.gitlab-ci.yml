@@ -12,7 +12,6 @@ default:
 build_job:
   stage: build
   script:
-    - "yq -ir '.metadata.version += \"'\".$CI_PIPELINE_IID\"'\"' zarf.yaml"
     - zarf package create --confirm
     - zarf package publish zarf-package-*.tar.zst oci://$CI_REGISTRY_IMAGE
 
@@ -24,4 +23,4 @@ deploy_job:
     - mkdir -p $HOME/.kube
     - cat $CONFIG > $HOME/.kube/config
     - COSMOLOGY_VERSION=$(yq -r '.metadata.version' zarf.yaml)
-    - zarf package deploy oci://$CI_REGISTRY_IMAGE/cosmology:$COSMOLOGY_VERSION.$CI_PIPELINE_IID-amd64 --confirm --set REGISTRY1_USERNAME=$REGISTRY1_USERNAME --set REGISTRY1_CLI_SECRET=$REGISTRY1_CLI_SECRET --set REGISTRY1_AUTH=$REGISTRY1_AUTH
+    - zarf package deploy oci://$CI_REGISTRY_IMAGE/cosmology:$COSMOLOGY_VERSION-amd64 --confirm
