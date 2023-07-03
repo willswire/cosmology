@@ -16,6 +16,10 @@ tempo:
 # Kyverno image replacement
 kyverno:
   values:
+    image:
+      registry: cgr.dev
+      repository: chainguard/kyverno
+      tag: latest
     initImage:
       registry: cgr.dev
       repository: chainguard/kyvernopre
