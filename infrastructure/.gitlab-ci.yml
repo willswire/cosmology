@@ -42,3 +42,6 @@ deploy:
 
 cleanup:
   extends: .terraform:destroy
+  environment:
+    name: $TF_STATE_NAME
+    action: stop

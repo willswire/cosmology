@@ -1,4 +1,4 @@
 variable "symbiosis_api_key" {
-  type = string
+  type        = string
   description = "An Admin API key used to connect to Symbiosis from Terraform"
 }
