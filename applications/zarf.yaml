@@ -2,9 +2,9 @@ kind: ZarfPackageConfig
 
 metadata:
   name: cosmology
-  description: my personal deployment of Big Bang
-  version: 2.0.0
-  url: https://p1.dso.mil/products/big-bang
+  description: my personal deployment of bigbang
+  version: 1.0.0
+  url: https://gitlab.com/willswire/cosmology
   architecture: amd64
   yolo: true
 
@@ -17,11 +17,35 @@ variables:
     description: A base64 encoded concatenation of 'REGISTRY1_USERNAME:REGISTRY1_CLI_SECRET'
 
 components:
+  - name: flux-private-registry
+    required: true
+    actions:
+      onDeploy:
+        before:
+          - cmd: echo $REGISTRY1_USERNAME
+            mute: true
+            setVariables:
+              - name: REGISTRY1_USERNAME
+                sensitive: true
+          - cmd: echo $REGISTRY1_CLI_SECRET
+            mute: true
+            setVariables:
+              - name: REGISTRY1_CLI_SECRET
+                sensitive: true
+          - cmd: echo $REGISTRY1_AUTH
+            mute: true
+            setVariables:
+              - name: REGISTRY1_AUTH
+                sensitive: true
+    manifests:
+      - name: private-registry
+        namespace: flux-system
+        files:
+          - private-registry.yaml
   - name: bigbang
     required: true
     extensions:
       bigbang:
-        version: 2.0.0
-        repo: https://gitlab.com/willswire/cosmology.git
+        version: 2.5.0
         valuesFiles:
           - values.yaml
