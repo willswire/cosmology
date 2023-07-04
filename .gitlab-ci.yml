@@ -2,7 +2,6 @@ stages:
   - trigger
 
 variables:
-  PIPELINE_NAME: Deploy
   DEPLOY_INFRA:
     value: "false"
     options:
@@ -16,9 +15,6 @@ variables:
       - "true"
     description: "Run the applications child pipeline"
 
-workflow:
-  name: $PIPELINE_NAME
-
 infrastructure:
   stage: trigger
   trigger:
@@ -28,8 +24,6 @@ infrastructure:
     - if: '$DEPLOY_INFRA == "true"'
     - changes: 
         - infrastructure/**/*
-  variables:
-    PIPELINE_NAME: $PIPELINE_NAME Infrastructure
 
 applications:
   stage: trigger
@@ -43,5 +37,3 @@ applications:
     - if: '$DEPLOY_APPS == "true"'
     - changes: 
         - applications/**/*
-  variables:
-    PIPELINE_NAME: $PIPELINE_NAME Applications
