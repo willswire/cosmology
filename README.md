@@ -1,6 +1,6 @@
 # Cosmology
 
-Working with Big Bang can be tricky. Especially when developing on a shared cluster with other team members. This project provides a playground for several of my personal "quests" in explore novel functionality and features in Big Bang. In order to test my ideas and experiment on the cheap, I use the following technologies:
+Working with Big Bang can be tricky. Especially when developing on a shared cluster with other team members. This project provides a playground for several of my personal "quests" in exploring novel functionality and features within Big Bang. In order to test my ideas and experiment on the cheap, I use the following technologies:
 
 - [Terraform](https://www.terraform.io) to dynamically spin up infrastructure via [GitLab CI/CD](https://docs.gitlab.com/ee/ci/)
 - Managed Kubernetes on [Symbiosis](https://symbiosis.host) (almost a quarter of the cost of EKS on AWS!)
