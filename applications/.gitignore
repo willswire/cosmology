@@ -1,3 +1,4 @@
 .env
 *.tar.zst
 zarf-sbom/
+.age

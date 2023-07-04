@@ -5,6 +5,44 @@ registryCredentials:
   password: "###ZARF_VAR_REGISTRY1_CLI_SECRET###"
   email: ""
 
+domain: cosmos.willswire.com
+
+istio:
+  gateways:
+    public:
+      tls: # certs for *.cosmos.willswire.com
+        key: |
+          ###ZARF_VAR_DOMAIN_PRIVATE_KEY###
+        cert: |
+          -----BEGIN CERTIFICATE-----
+          MIIEtDCCA5ygAwIBAgIUNFdGbNmZ9TP+FXxERKFDyXh2S4MwDQYJKoZIhvcNAQEL
+          BQAwgYsxCzAJBgNVBAYTAlVTMRkwFwYDVQQKExBDbG91ZEZsYXJlLCBJbmMuMTQw
+          MgYDVQQLEytDbG91ZEZsYXJlIE9yaWdpbiBTU0wgQ2VydGlmaWNhdGUgQXV0aG9y
+          aXR5MRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMRMwEQYDVQQIEwpDYWxpZm9ybmlh
+          MB4XDTIzMDcwNDA0NDIwMFoXDTIzMTAwMjA0NDIwMFowYjEZMBcGA1UEChMQQ2xv
+          dWRGbGFyZSwgSW5jLjEdMBsGA1UECxMUQ2xvdWRGbGFyZSBPcmlnaW4gQ0ExJjAk
+          BgNVBAMTHUNsb3VkRmxhcmUgT3JpZ2luIENlcnRpZmljYXRlMIIBIjANBgkqhkiG
+          9w0BAQEFAAOCAQ8AMIIBCgKCAQEA29MEnpnjACqjfnyCLIcDqzMwBpvl+qaQnSWx
+          cEzfBThN8pLAaEsd5VQbmS47yExJxk7u01CknaoNijdZSZYnhNV92liotCkRS925
+          emPifogFubmchr23kEi2dxmYaHlk5LCXtA1YYKvwm5p7bEESowVGjjEF2dZai51Y
+          VCdpiLu4Br7O9Yf0+jEgxDssse1GoMZmEm7eZhAn93IniDmHzqXMXAmPgi5DOxUG
+          fAmGqK3y8pjkNtbYAM0dbc+oOXXBF8Mdn12ADdNMbaCGH5wyoJ0QIwmUeEuaGytG
+          i+sFFOLwy4ZKmf5e48lartVV2m+xRJIUOBbY63vlAMoOHel+YwIDAQABo4IBNjCC
+          ATIwDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcD
+          ATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBQooKK/H81CmeO8bA089+0OQMSYkTAf
+          BgNVHSMEGDAWgBQk6FNXXXw0QIep65TbuuEWePwppDBABggrBgEFBQcBAQQ0MDIw
+          MAYIKwYBBQUHMAGGJGh0dHA6Ly9vY3NwLmNsb3VkZmxhcmUuY29tL29yaWdpbl9j
+          YTA3BgNVHREEMDAughYqLmNvc21vcy53aWxsc3dpcmUuY29tghRjb3Ntb3Mud2ls
+          bHN3aXJlLmNvbTA4BgNVHR8EMTAvMC2gK6AphidodHRwOi8vY3JsLmNsb3VkZmxh
+          cmUuY29tL29yaWdpbl9jYS5jcmwwDQYJKoZIhvcNAQELBQADggEBAFKW8LGXrfpT
+          r+Iu98Ylwo4VbvYd9kRoPXwNrFAun/VmdqwRBATrlqEHhRbxjVbil99ulYS8KsVR
+          rOskptf9KQp26Ucdqg6fPmQGAdXi0Kb80+pyXCEv5GT7kMdiLzBQWOIYKPQ677np
+          FH1y1bzC4sTBYB3HRvI+l46zzaKGB4uqQOC6ZZy/vDiBJP/QFyiYtax3yncxLDNN
+          wdKA8aEFiScud8atMJGJA5YwyJj8GsSe9Z8FHe1XBtwBI3sFJ7ra/7fZ+rDydJ95
+          /pfMzkrdWUto4xY1t/fm4czIuECE2HozsdQFlF5wAIpzVYePTLmmPdZ3FIpTqp+p
+          lSBZszFrYKQ=
+          -----END CERTIFICATE-----
+
 # Neuvector deployment bug fixed in later version of Big Bang; we pin to v2.0.0
 neuvector:
   enabled: false
