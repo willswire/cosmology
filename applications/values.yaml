@@ -66,8 +66,7 @@ monitoring:
     grafana:
       sidecar:
         image:
-          registry: cgr.dev
-          repository: chainguard/k8s-sidecar
+          repository: cgr.dev/chainguard/k8s-sidecar
           tag: latest
         resources:
           limits:
@@ -87,16 +86,28 @@ monitoring:
           tag: latest
     prometheusOperator:
       image:
-        repository: cgr.dev/chainguard/prometheus-operator
+        registry: cgr.dev
+        repository: chainguard/prometheus-operator
+        tag: latest
+      thanosImage:
+        registry: cgr.dev
+        repository: chainguard/thanos
         tag: latest
       prometheusConfigReloader:
         image:
-          repository: cgr.dev/chainguard/prometheus-config-reloader
+          registry: cgr.dev
+          repository: chainguard/prometheus-config-reloader
           tag: latest
     prometheus-node-exporter:
       image:
         repository: cgr.dev/chainguard/prometheus-node-exporter
         tag: latest
+    thanosRuler:
+      thanosRulerSpec:
+        image:
+          registry: cgr.dev
+          repository: chainguard/thanos
+          tag: latest
 
 # Addons image replacements
 addons:
