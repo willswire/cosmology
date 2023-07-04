@@ -44,8 +44,14 @@ components:
           - private-registry.yaml
   - name: bigbang
     required: true
+    actions:
+      onDeploy:
+        after:
+          - cmd: "kubectl patch hr bigbang -n bigbang --type merge -p '{\"spec\" : {\"suspend\" : true }}'"
+          - cmd: "kubectl patch hr bigbang -n bigbang --type merge -p '{\"spec\" : {\"suspend\" : false }}'"
     extensions:
       bigbang:
+        repo: https://gitlab.com/willswire/bigbang
         version: 2.0.0
         valuesFiles:
           - values.yaml
