@@ -1,6 +1,10 @@
 stages:
   - trigger
 
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
 variables:
   DEPLOY_INFRA:
     value: "false"
