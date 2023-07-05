@@ -41,7 +41,7 @@ components:
       - name: private-registry
         namespace: flux-system
         files:
-          - private-registry.yaml
+          - configurations/private-registry.yaml
   - name: bigbang
     required: true
     actions:
@@ -54,4 +54,5 @@ components:
         repo: https://gitlab.com/willswire/bigbang
         version: 2.0.0
         valuesFiles:
-          - values.yaml
+          - configurations/main.yaml
+          - configurations/istio.yaml
