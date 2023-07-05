@@ -7,17 +7,6 @@ registryCredentials:
 
 domain: tatooine.dev
 
-istio:
-  gateways:
-    public:
-      tls: # certs for *.tatooine.dev
-        key: |
-          -----BEGIN PRIVATE KEY-----
-          -----END PRIVATE KEY-----
-        cert: |
-          -----BEGIN CERTIFICATE-----
-          -----END CERTIFICATE-----
-
 # Neuvector deployment bug fixed in later version of Big Bang; we pin to v2.0.0
 neuvector:
   enabled: false
