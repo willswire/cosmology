@@ -1,11 +1,20 @@
 # Needed for Iron Bank images and default Big Bang packages; set at deploy time 
 registryCredentials:
   registry: registry1.dso.mil
-  username: "###ZARF_VAR_REGISTRY1_USERNAME###"
-  password: "###ZARF_VAR_REGISTRY1_CLI_SECRET###"
+  username: "" # set in secrets overlay
+  password: "" # set in secrets overlay
   email: ""
 
+# Networking configuration
 domain: tatooine.dev
+istio:
+  gateways:
+    public:
+      tls:
+        mode: MUTUAL
+        key: "" # set in secrets overlay
+        cert: "" # set in secrets overlay
+        ca: "" # set in secrets overlay
 
 # Neuvector deployment bug fixed in later version of Big Bang; we pin to v2.0.0
 neuvector:
@@ -79,7 +88,8 @@ monitoring:
             memory: 100Mi
     kube-state-metrics:
       image:
-        repository: cgr.dev/chainguard/kube-state-metrics
+        registry: cgr.dev
+        repository: chainguard/kube-state-metrics
         tag: latest
     prometheus:
       prometheusSpec:
@@ -100,10 +110,11 @@ monitoring:
           registry: cgr.dev
           repository: chainguard/prometheus-config-reloader
           tag: latest
-    prometheus-node-exporter:
-      image:
-        repository: cgr.dev/chainguard/prometheus-node-exporter
-        tag: latest
+    ## mismatching node exporter version from chainguard
+    # prometheus-node-exporter:
+    #   image:
+    #     repository: cgr.dev/chainguard/prometheus-node-exporter
+    #     tag: latest
     thanosRuler:
       thanosRulerSpec:
         image:

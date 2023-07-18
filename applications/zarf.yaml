@@ -2,57 +2,19 @@ kind: ZarfPackageConfig
 
 metadata:
   name: cosmology
-  description: my personal deployment of bigbang
+  description: my personal deployment of big bang
   version: 1.0.0
   url: https://gitlab.com/willswire/cosmology
   architecture: amd64
   yolo: true
 
-variables:
-  - name: REGISTRY1_USERNAME
-    description: The username for pulling images from registry1.dso.mil
-  - name: REGISTRY1_CLI_SECRET
-    description: The CLI secret for pulling images from registry1.dso.mil
-  - name: REGISTRY1_AUTH
-    description: A base64 encoded concatenation of 'REGISTRY1_USERNAME:REGISTRY1_CLI_SECRET'
-
 components:
-  - name: flux-private-registry
-    required: true
-    actions:
-      onDeploy:
-        before:
-          - cmd: echo $REGISTRY1_USERNAME
-            mute: true
-            setVariables:
-              - name: REGISTRY1_USERNAME
-                sensitive: true
-          - cmd: echo $REGISTRY1_CLI_SECRET
-            mute: true
-            setVariables:
-              - name: REGISTRY1_CLI_SECRET
-                sensitive: true
-          - cmd: echo $REGISTRY1_AUTH
-            mute: true
-            setVariables:
-              - name: REGISTRY1_AUTH
-                sensitive: true
-    manifests:
-      - name: private-registry
-        namespace: flux-system
-        files:
-          - configurations/private-registry.yaml
   - name: bigbang
     required: true
-    actions:
-      onDeploy:
-        after:
-          - cmd: "kubectl patch hr bigbang -n bigbang --type merge -p '{\"spec\" : {\"suspend\" : true }}'"
-          - cmd: "kubectl patch hr bigbang -n bigbang --type merge -p '{\"spec\" : {\"suspend\" : false }}'"
     extensions:
       bigbang:
         repo: https://gitlab.com/willswire/bigbang
-        version: 2.0.0
+        version: 2.5.0-cosmology
         valuesFiles:
-          - configurations/main.yaml
-          - configurations/istio.yaml
+          - main.yaml
+          - secrets.yaml
