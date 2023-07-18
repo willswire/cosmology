@@ -88,7 +88,8 @@ monitoring:
             memory: 100Mi
     kube-state-metrics:
       image:
-        repository: cgr.dev/chainguard/kube-state-metrics
+        registry: cgr.dev
+        repository: chainguard/kube-state-metrics
         tag: latest
     prometheus:
       prometheusSpec:
