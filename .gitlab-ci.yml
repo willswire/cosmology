@@ -12,6 +12,9 @@ toolbox:
 
 infrastructure:
   stage: trigger
+  needs:
+    - job: toolbox
+      optional: true
   trigger:
     include: infrastructure/.gitlab-ci.yml
     strategy: depend
