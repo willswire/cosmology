@@ -1,26 +1,13 @@
-stages:
-  - build
-  - deploy
-
-default:
-  image: $CI_REGISTRY_IMAGE/toolbox:0.1
-  before_script:
-    - echo $REGISTRY1_CLI_SECRET | zarf tools registry login registry1.dso.mil --username $REGISTRY1_USERNAME --password-stdin
-    - echo $CI_REGISTRY_PASSWORD | zarf tools registry login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
-    - cd applications
-
-build_job:
+build:
+  image: $CI_REGISTRY_IMAGE/toolbox
   stage: build
-  script:
-    - zarf package create --confirm
-    - zarf package publish zarf-package-*.tar.zst oci://$CI_REGISTRY_IMAGE
-
-deploy_job:
-  stage: deploy
-  environment: development
-  resource_group: development
-  script:
+  before_script:
     - mkdir -p $HOME/.kube
     - cat $CONFIG > $HOME/.kube/config
-    - COSMOLOGY_VERSION=$(yq -r '.metadata.version' zarf.yaml)
-    - zarf package deploy oci://$CI_REGISTRY_IMAGE/cosmology:$COSMOLOGY_VERSION-amd64 --confirm
+    - echo $REGISTRY1_CLI_SECRET | zarf tools registry login registry1.dso.mil --username $REGISTRY1_USERNAME --password-stdin
+    - echo $CI_REGISTRY_PASSWORD | zarf tools registry login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
+  script:
+    - cd applications
+    - sops -d -i istio.yaml
+    - zarf package create --skip-sbom --confirm --no-progress
+    - zarf package deploy zarf-package-*.tar.zst --confirm --no-progress
