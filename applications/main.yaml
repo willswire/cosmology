@@ -1,8 +1,8 @@
 # Needed for Iron Bank images and default Big Bang packages; set at deploy time 
 registryCredentials:
   registry: registry1.dso.mil
-  username: "###ZARF_VAR_REGISTRY1_USERNAME###"
-  password: "###ZARF_VAR_REGISTRY1_CLI_SECRET###"
+  username: "" # set in secrets overlay
+  password: "" # set in secrets overlay
   email: ""
 
 # Networking configuration
@@ -109,10 +109,11 @@ monitoring:
           registry: cgr.dev
           repository: chainguard/prometheus-config-reloader
           tag: latest
-    prometheus-node-exporter:
-      image:
-        repository: cgr.dev/chainguard/prometheus-node-exporter
-        tag: latest
+    ## mismatching node exporter version from chainguard
+    # prometheus-node-exporter:
+    #   image:
+    #     repository: cgr.dev/chainguard/prometheus-node-exporter
+    #     tag: latest
     thanosRuler:
       thanosRulerSpec:
         image:
