@@ -1,8 +1,8 @@
 kind: ZarfPackageConfig
 
 metadata:
-  name: cosmology
-  description: my personal deployment of bigbang
+  name: Cosmology
+  description: Will's personal deployment of Big Bang
   version: 1.0.0
   url: https://gitlab.com/willswire/cosmology
   architecture: amd64
