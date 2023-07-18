@@ -41,7 +41,7 @@ components:
       - name: private-registry
         namespace: flux-system
         files:
-          - configurations/private-registry.yaml
+          - private-registry.yaml
   - name: bigbang
     required: true
     actions:
