@@ -1,0 +1,8 @@
+istio:
+    gateways:
+        public:
+            tls:
+                mode: MUTUAL
+                key: ""
+                cert: ""
+                ca: ""

@@ -7,6 +7,15 @@ registryCredentials:
 
 domain: tatooine.dev
 
+istio:
+  gateways:
+    public:
+      tls:
+        mode: MUTUAL
+        key: "" # set in secrets overlay
+        cert: "" # set in secrets overlay
+        ca: "" # set in secrets overlay
+
 # Neuvector deployment bug fixed in later version of Big Bang; we pin to v2.0.0
 neuvector:
   enabled: false
