@@ -1,3 +1,3 @@
-.env
+# Zarf assets
 *.tar.zst
 zarf-sbom/

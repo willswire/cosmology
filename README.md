@@ -10,6 +10,6 @@ Working with Big Bang can be tricky. Especially when developing on a shared clus
 
 The following list contains ideas I hope to explore within this project:
 
-- [ ] leveraging [Cloudflare Zero Trust](https://www.cloudflare.com/zero-trust/) for ICAM to Big Bang apps and services
+- [ x ] leveraging [Cloudflare Zero Trust](https://www.cloudflare.com/zero-trust/) for ICAM to Big Bang apps and services
 - [ ] switching out Iron Bank images for [Chainguard](https://www.chainguard.dev) where possible
 - [ ] developing and deploying my own custom packages via the Wrapper as described [here](https://docs-bigbang.dso.mil/latest/docs/guides/deployment-scenarios/extra-package-deployment/)
