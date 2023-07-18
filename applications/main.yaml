@@ -5,8 +5,8 @@ registryCredentials:
   password: "###ZARF_VAR_REGISTRY1_CLI_SECRET###"
   email: ""
 
+# Networking configuration
 domain: tatooine.dev
-
 istio:
   gateways:
     public:
