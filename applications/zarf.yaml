@@ -8,14 +8,6 @@ metadata:
   architecture: amd64
   yolo: true
 
-variables:
-  - name: REGISTRY1_USERNAME
-    description: The username for pulling images from registry1.dso.mil
-  - name: REGISTRY1_CLI_SECRET
-    description: The CLI secret for pulling images from registry1.dso.mil
-  - name: REGISTRY1_AUTH
-    description: A base64 encoded concatenation of 'REGISTRY1_USERNAME:REGISTRY1_CLI_SECRET'
-
 components:
   - name: bigbang
     required: true
