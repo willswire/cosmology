@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-controller
+  namespace: flux-system
+spec:
+  selector:
+    matchLabels:
+      app: notification-controller
+  template:
+    spec:
+      containers:
+      - name: manager
+        image: cgr.dev/chainguard/notification-controller:latest
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi

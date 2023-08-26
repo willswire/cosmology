@@ -11,5 +11,5 @@ RUN apk add --no-cache \
     yq
 
 # Install Zarf
-RUN curl -L -o /usr/bin/zarf https://github.com/defenseunicorns/zarf/releases/download/v0.28.2/zarf_v0.28.2_Linux_amd64
+RUN curl -L -o /usr/bin/zarf https://github.com/defenseunicorns/zarf/releases/download/v0.29.0/zarf_v0.29.0_Linux_amd64
 RUN chmod +x /usr/bin/zarf

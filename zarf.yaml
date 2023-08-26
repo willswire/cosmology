@@ -3,7 +3,7 @@ kind: ZarfPackageConfig
 metadata:
   name: cosmology
   description: my personal deployment of big bang
-  version: 1.0.0
+  version: 1.1.0
   url: https://gitlab.com/willswire/cosmology
   architecture: amd64
   yolo: true
@@ -13,8 +13,12 @@ components:
     required: true
     extensions:
       bigbang:
-        repo: https://gitlab.com/willswire/bigbang
-        version: 2.5.0-cosmology
+        version: 2.9.0
+        fluxPatchFiles:
+          - flux/helm-controller.yaml
+          - flux/source-controller.yaml
+          - flux/kustomize-controller.yaml
+          - flux/notification-controller.yaml
         valuesFiles:
           - main.yaml
           - secrets.yaml

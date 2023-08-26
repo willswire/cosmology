@@ -1,1 +1,9 @@
+# keys, tokens, etc.
 .env
+
+# zarf assets
+*.tar.zst
+zarf-sbom/
+
+# Secret values
+secrets.yaml

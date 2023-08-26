@@ -1,9 +1,9 @@
-# Needed for Iron Bank images and default Big Bang packages; set at deploy time 
+# Iron Bank required for default Big Bang configurations
 registryCredentials:
   registry: registry1.dso.mil
   username: "" # set in secrets overlay
   password: "" # set in secrets overlay
-  email: ""
+  email: "" # this can stay empty
 
 # Networking configuration
 domain: tatooine.dev
@@ -12,37 +12,31 @@ istio:
     public:
       tls:
         mode: MUTUAL
-        key: "" # set in secrets overlay
         cert: "" # set in secrets overlay
+        key: "" # set in secrets overlay
         ca: "" # set in secrets overlay
 
-# Neuvector deployment bug fixed in later version of Big Bang; we pin to v2.0.0
+# Disable Neuvector
 neuvector:
   enabled: false
 
-# Tempo is the "straw that broke the camel's back" for my pay-to-play cluster ):
+# Disable Tempo
 tempo:
   enabled: false
 
 # Kyverno image replacement
 kyverno:
   values:
-    ## mismatching kyverno version from chainguard
-    #image:
-    #  registry: cgr.dev
-    #  repository: chainguard/kyverno
-    #  tag: latest
-    #extraArgs:
-    #  - --clientRateLimitQPS=25
-    #  - --clientRateLimitBurst=50
-    #  - --loggingFormat=text
-    #  - --exceptionNamespace={{ include "kyverno.namespace" . }}
+    image:
+     registry: cgr.dev
+     repository: chainguard/kyverno
+     tag: latest
     initImage:
       registry: cgr.dev
       repository: chainguard/kyvernopre
       tag: latest
 
-# Edit policies to allow using alternate registries, 'latest' tags, etc.
+# Kyverno policies to allow using alternate registries, 'latest' tags, etc.
 kyvernoPolicies:
   enabled: true
   values:
@@ -110,7 +104,7 @@ monitoring:
           registry: cgr.dev
           repository: chainguard/prometheus-config-reloader
           tag: latest
-    ## mismatching node exporter version from chainguard
+    ## mismatching node exporter version from chainguard (semverCompare issue)
     # prometheus-node-exporter:
     #   image:
     #     repository: cgr.dev/chainguard/prometheus-node-exporter

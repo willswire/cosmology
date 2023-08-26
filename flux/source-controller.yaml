@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: source-controller
+  namespace: flux-system
+spec:
+  selector:
+    matchLabels:
+      app: source-controller
+  template:
+    spec:
+      containers:
+      - name: manager
+        image: cgr.dev/chainguard/source-controller:latest
+        resources:
+          limits:
+            cpu: 300m
+            memory: 384Mi
+          requests:
+            cpu: 300m
+            memory: 384Mi
