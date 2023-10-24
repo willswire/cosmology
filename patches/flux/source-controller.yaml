@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: helm-controller
+  name: source-controller
   namespace: flux-system
 spec:
   selector:
     matchLabels:
-      app: helm-controller
+      app: source-controller
   template:
     spec:
       containers:
       - name: manager
-        image: cgr.dev/chainguard/helm-controller:latest
+        image: cgr.dev/chainguard/flux-source-controller:latest
         resources:
           limits:
-            cpu: 900m
-            memory: 1Gi
+            cpu: 300m
+            memory: 384Mi
           requests:
-            cpu: 900m
-            memory: 1Gi
+            cpu: 300m
+            memory: 384Mi

@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: manager
-        image: cgr.dev/chainguard/notification-controller:latest
+        image: cgr.dev/chainguard/flux-notification-controller:latest
         resources:
           limits:
             cpu: 100m

@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: source-controller
+  name: kustomize-controller
   namespace: flux-system
 spec:
   selector:
     matchLabels:
-      app: source-controller
+      app: kustomize-controller
   template:
     spec:
       containers:
       - name: manager
-        image: cgr.dev/chainguard/source-controller:latest
+        image: cgr.dev/chainguard/flux-kustomize-controller:latest
         resources:
           limits:
             cpu: 300m
-            memory: 384Mi
+            memory: 600Mi
           requests:
             cpu: 300m
-            memory: 384Mi
+            memory: 600Mi

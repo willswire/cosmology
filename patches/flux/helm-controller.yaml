@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kustomize-controller
+  name: helm-controller
   namespace: flux-system
 spec:
   selector:
     matchLabels:
-      app: kustomize-controller
+      app: helm-controller
   template:
     spec:
       containers:
       - name: manager
-        image: cgr.dev/chainguard/kustomize-controller:latest
+        image: cgr.dev/chainguard/flux-helm-controller:latest
         resources:
           limits:
-            cpu: 300m
-            memory: 600Mi
+            cpu: 900m
+            memory: 1Gi
           requests:
-            cpu: 300m
-            memory: 600Mi
+            cpu: 900m
+            memory: 1Gi

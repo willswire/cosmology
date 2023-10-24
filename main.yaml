@@ -1,31 +1,60 @@
-# Iron Bank required for default Big Bang configurations
-registryCredentials:
-  registry: registry1.dso.mil
-  username: "" # set in secrets overlay
-  password: "" # set in secrets overlay
-  email: "" # this can stay empty
-
-# Networking configuration
+##
+# GLOBAL CONFIGURATIONS
+##
 domain: tatooine.dev
+
+registryCredentials:
+  - registry: registry1.dso.mil
+    username: "" # set in secrets overlay
+    password: "" # set in secrets overlay
+    email: ""    # this can stay empty
+
+##
+# SERVICE MESH (Istio, Kiali)
+##
 istio:
+  enabled: true
   gateways:
     public:
       tls:
         mode: MUTUAL
         cert: "" # set in secrets overlay
-        key: "" # set in secrets overlay
-        ca: "" # set in secrets overlay
+        key: ""  # set in secrets overlay
+        ca: ""   # set in secrets overlay
+  values:
+    hub: cgr.dev/chainguard
+    tag: latest
+    values:
+      pilot: 
+        image: istio-pilot
+      global:
+        proxy:
+          image: istio-proxy
 
-# Disable Neuvector
-neuvector:
+istioOperator:
+  enabled: true
+  values:
+    hub: cgr.dev/chainguard
+    image: istio-operator
+    tag: latest
+
+kiali:
   enabled: false
 
-# Disable Tempo
-tempo:
+##
+# LOGGING (Loki, Promtail)
+##
+loki:
   enabled: false
 
-# Kyverno image replacement
+promtail:
+  enabled: false
+
+##
+# POLICY ENFORCEMENT (Kyverno)
+##
 kyverno:
+  enabled: true
   values:
     image:
      registry: cgr.dev
@@ -36,9 +65,8 @@ kyverno:
       repository: chainguard/kyvernopre
       tag: latest
 
-# Kyverno policies to allow using alternate registries, 'latest' tags, etc.
 kyvernoPolicies:
-  enabled: true
+  enabled: false
   values:
     policies:
       disallow-image-tags:
@@ -60,8 +88,14 @@ kyvernoPolicies:
       restrict-host-path-mount-pv:
         validationFailureAction: audit
 
-# Monitoring image replacements
+kyvernoReporter:
+  enabled: false
+
+##
+# MONITORING (Prometheus, Grafana)
+##
 monitoring:
+  enabled: true
   values:
     alertmanager:
       alertmanagerSpec:
@@ -104,11 +138,14 @@ monitoring:
           registry: cgr.dev
           repository: chainguard/prometheus-config-reloader
           tag: latest
-    ## mismatching node exporter version from chainguard (semverCompare issue)
-    # prometheus-node-exporter:
-    #   image:
-    #     repository: cgr.dev/chainguard/prometheus-node-exporter
-    #     tag: latest
+    ## mismatching node exporter version tag from chainguard (semverCompare issue)
+    ## https://github.com/prometheus-community/helm-charts/blob/6df9ef36a6eea543fef3188e1357e6d63287efd5/charts/prometheus-node-exporter/templates/daemonset.yaml#L52
+    ## requires a re-tagged image with a semver compatible value
+    prometheus-node-exporter:
+      image:
+        registry: registry.gitlab.com
+        repository: willswire/cosmology/chainguard/prometheus-node-exporter
+        tag: v1.6.1
     thanosRuler:
       thanosRulerSpec:
         image:
@@ -116,10 +153,71 @@ monitoring:
           repository: chainguard/thanos
           tag: latest
 
-# Addons image replacements
-addons:
-  metricsServer:
+grafana:
+  enabled: false
+  values:
+    sidecar:
+      image:
+        repository: cgr.dev/chainguard/k8s-sidecar
+        tag: latest
+      resources:
+        limits:
+          cpu: 500m
+          memory: 500Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+
+##
+# DISTRIBUTED TRACING (Tempo)
+##
+tempo:
+  enabled: false
+
+##
+# RUNTIME SECURITY (Neuvector)
+##
+neuvector:
+  enabled: false
+
+##
+# CUSTOM PACKAGES
+##
+helmRepositories:
+  - name: cosmology-packages
+    repository: "oci://registry.gitlab.com/willswire/cosmology/packages"
+    type: "oci"
+    username: ""
+    password: ""
+
+packages:
+  gitlab-agent:
+    enabled: true
+    wrapper:
+      enabled: true
+    git:
+      repo: https://gitlab.com/gitlab-org/charts/gitlab-agent.git
+      tag: v1.19.0
+      path: ./
     values:
       image:
-        repository: cgr.dev/chainguard/metrics-server
-        tag: latest
+        tag: v16.5.0-rc1
+      config:
+        token: "" # set in secrets overlay
+        kasAddress: wss://kas.gitlab.com
+  clip:
+    enabled: true
+    wrapper:
+      enabled: true
+    helmRepo:
+      repoName: cosmology-packages
+      chartName: clip
+      tag: 0.2.0
+    dependsOn:
+      - name: istio
+        namespace: bigbang
+    secrets:
+      - name: cloudflare-credentials
+        data:
+          AUTH_KEY: "" # set in secrets overlay
+          ZONE_ID: ""  # set in secrets overlay

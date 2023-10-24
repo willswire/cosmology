@@ -1,38 +1,37 @@
 terraform {
   required_providers {
-    symbiosis = {
-      source  = "symbiosis-cloud/symbiosis"
-      version = "0.5.6"
-    }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "2.21.1"
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "3.72.0"
     }
   }
+
   backend "http" {}
 }
 
-provider "symbiosis" {
-  api_key = var.symbiosis_api_key
+provider "azurerm" {
+  features {}
+  skip_provider_registration = true
 }
 
-provider "kubernetes" {
-  host = "https://${symbiosis_cluster.development.endpoint}"
-
-  client_certificate     = symbiosis_cluster.development.certificate
-  client_key             = symbiosis_cluster.development.private_key
-  cluster_ca_certificate = symbiosis_cluster.development.ca_certificate
+resource "azurerm_resource_group" "cosmology" {
+  name     = "cosmology"
+  location = "South Central US"
 }
 
-resource "symbiosis_cluster" "development" {
-  name   = "development"
-  region = "germany-1"
-}
+resource "azurerm_kubernetes_cluster" "cosmology" {
+  name                = "${azurerm_resource_group.cosmology.name}-cluster"
+  resource_group_name = azurerm_resource_group.cosmology.name
+  dns_prefix          = azurerm_resource_group.cosmology.name
+  location            = azurerm_resource_group.cosmology.location
 
-resource "symbiosis_node_pool" "development" {
-  cluster = symbiosis_cluster.development.name
+  default_node_pool {
+    name       = "default"
+    node_count = 3
+    vm_size    = "Standard_B4ms"
+  }
 
-  node_type = "general-3"
-  quantity  = 3
-  name      = "development-pool"
+  identity {
+    type = "SystemAssigned"
+  }
 }

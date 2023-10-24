@@ -7,3 +7,6 @@ zarf-sbom/
 
 # Secret values
 secrets.yaml
+
+# helm packages
+*.tgz
