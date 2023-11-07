@@ -27,11 +27,24 @@ resource "azurerm_kubernetes_cluster" "cosmology" {
 
   default_node_pool {
     name       = "default"
-    node_count = 3
     vm_size    = "Standard_B4ms"
+    enable_auto_scaling = true
+    min_count = 1
+    max_count = 3
   }
 
   identity {
     type = "SystemAssigned"
+  }
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "gpu_pool" {
+  name                  = "gpupool"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.cosmology.id
+  vm_size               = "Standard_NC4as_T4_v3"
+  node_taints           = ["sku=gpu:NoSchedule"]
+  node_count            = 1
+  node_labels = {
+    "node_type" = "gpu"
   }
 }

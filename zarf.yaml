@@ -1,5 +1,4 @@
 kind: ZarfPackageConfig
-
 metadata:
   name: cosmology
   description: my personal deployment of big bang
@@ -7,7 +6,6 @@ metadata:
   url: https://gitlab.com/willswire/cosmology
   architecture: amd64
   yolo: true
-
 components:
   - name: bigbang
     required: true

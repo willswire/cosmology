@@ -8,6 +8,10 @@ registryCredentials:
     username: "" # set in secrets overlay
     password: "" # set in secrets overlay
     email: ""    # this can stay empty
+  - registry: registry.gitlab.com
+    username: "" # set in secrets overlay
+    password: "" # set in secrets overlay
+    email: ""    # this can stay empty
 
 ##
 # SERVICE MESH (Istio, Kiali)
@@ -186,9 +190,12 @@ neuvector:
 helmRepositories:
   - name: cosmology-packages
     repository: "oci://registry.gitlab.com/willswire/cosmology/packages"
+    existingSecret: "private-registry"
     type: "oci"
-    username: ""
-    password: ""
+  - name: shadows-edge-packages
+    repository: "oci://registry.gitlab.com/90cos"
+    existingSecret: "private-registry"
+    type: "oci"
 
 packages:
   gitlab-agent:
@@ -197,11 +204,9 @@ packages:
       enabled: true
     git:
       repo: https://gitlab.com/gitlab-org/charts/gitlab-agent.git
-      tag: v1.19.0
+      tag: v1.20.0
       path: ./
     values:
-      image:
-        tag: v16.5.0-rc1
       config:
         token: "" # set in secrets overlay
         kasAddress: wss://kas.gitlab.com
@@ -221,3 +226,42 @@ packages:
         data:
           AUTH_KEY: "" # set in secrets overlay
           ZONE_ID: ""  # set in secrets overlay
+  shadow-llama:
+    enabled: true
+    wrapper:
+      enabled: true
+    helmRepo:
+      repoName: shadows-edge-packages
+      chartName: shadow-llama
+      tag: 0.1.2
+    dependsOn:
+      - name: istio
+        namespace: bigbang
+    values:
+      domain: tatooine.dev
+      gateway: istio-system/public
+      apiServer:
+        enableGPU: true
+        replicas: 1
+        tolerations:
+          - key: sku
+            operator: Equal
+            value: gpu
+            effect: NoSchedule
+        nodeSelector:
+          node_type: gpu
+        resources:
+          limits:
+            memory: "16Gi"
+            cpu: "2"
+          requests:
+            memory: "8Gi"
+            cpu: "1"
+      codey:
+        model: "mistral:7b-instruct"
+        gitlabUrl: "https://gitlab.com"
+    secrets:
+      - name: codey-credentials
+        data:
+          CODEY_THE_MAGICAL_BOT_USERNAME: "" # set in secrets overlay
+          GITLAB_API_KEY: ""  # set in secrets overlay
