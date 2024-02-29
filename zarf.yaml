@@ -2,21 +2,16 @@ kind: ZarfPackageConfig
 metadata:
   name: cosmology
   description: my personal deployment of big bang
-  version: 1.1.0
+  version: 1.2.0
   url: https://gitlab.com/willswire/cosmology
   architecture: amd64
   yolo: true
 components:
   - name: bigbang
     required: true
-    actions:
-      onDeploy:
-        after:
-          - cmd: "zarf tools kubectl patch hr bigbang -n bigbang -p '{\"spec\":{\"suspend\": true}}' --type=merge"
-          - cmd: "zarf tools kubectl patch hr bigbang -n bigbang -p '{\"spec\":{\"suspend\": false}}' --type=merge"
     extensions:
       bigbang:
-        version: 2.10.0
+        version: 2.20.0
         fluxPatchFiles:
           - patches/flux/helm-controller.yaml
           - patches/flux/source-controller.yaml

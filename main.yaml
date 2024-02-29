@@ -226,42 +226,19 @@ packages:
         data:
           AUTH_KEY: "" # set in secrets overlay
           ZONE_ID: ""  # set in secrets overlay
-  shadow-llama:
+  underhill:
     enabled: true
     wrapper:
       enabled: true
+    istio:
+      injection: "disabled"
     helmRepo:
       repoName: shadows-edge-packages
-      chartName: shadow-llama
-      tag: 0.1.2
+      chartName: underhill
+      tag: '0.0.x-dev'
     dependsOn:
       - name: istio
         namespace: bigbang
     values:
       domain: tatooine.dev
       gateway: istio-system/public
-      apiServer:
-        enableGPU: true
-        replicas: 1
-        tolerations:
-          - key: sku
-            operator: Equal
-            value: gpu
-            effect: NoSchedule
-        nodeSelector:
-          node_type: gpu
-        resources:
-          limits:
-            memory: "16Gi"
-            cpu: "2"
-          requests:
-            memory: "8Gi"
-            cpu: "1"
-      codey:
-        model: "mistral:7b-instruct"
-        gitlabUrl: "https://gitlab.com"
-    secrets:
-      - name: codey-credentials
-        data:
-          CODEY_THE_MAGICAL_BOT_USERNAME: "" # set in secrets overlay
-          GITLAB_API_KEY: ""  # set in secrets overlay

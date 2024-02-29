@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # it's safer to do this: https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
-set -euxo pipefail
+set -exo pipefail
 
 # Check if CI_COMMIT_BRANCH is set and not empty
 if [ -z "$CI_COMMIT_BRANCH" ]; then
@@ -38,13 +38,10 @@ then
 fi
 
 # create the zarf package
-export ZARF_PRE_TAG=$(yq '.metadata.version' zarf.yaml)
-yq e -i '.metadata.version += "-" + env(TAG)' zarf.yaml
 zarf package create --skip-sbom --confirm --no-progress
 
 # deploy the zarf package
 zarf package deploy zarf-package-*.tar.zst --confirm --no-progress
 
 # remove the zarf package
-yq e -i '.metadata.version = env(ZARF_PRE_TAG)' zarf.yaml
 rm zarf-package-*.tar.zst

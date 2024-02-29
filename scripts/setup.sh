@@ -5,7 +5,7 @@ set -euxo pipefail
 
 # create infrastructure
 cd infrastructure
-terraform apply -auto-approve
+tofu apply -auto-approve
 
 # set kube context
 az aks get-credentials --resource-group cosmology --name cosmology-cluster --overwrite-existing

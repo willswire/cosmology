@@ -5,4 +5,4 @@ set -euxo pipefail
 
 # destroy infrastructure
 cd infrastructure
-terraform destroy -auto-approve
+tofu destroy -auto-approve

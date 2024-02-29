@@ -1,7 +1,12 @@
-FROM alpine
+FROM alpine:3.19.1
 
-# Install package dependencies
+# Add testing repo
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+
+# Add community repo
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+
+# Install packages
 RUN apk add --no-cache \
     age \
     bash \
@@ -9,8 +14,5 @@ RUN apk add --no-cache \
     git \
     helm \
     sops \
-    yq
-
-# Install Zarf
-RUN curl -L -o /usr/bin/zarf https://github.com/defenseunicorns/zarf/releases/download/v0.31.0/zarf_v0.31.0_Linux_amd64
-RUN chmod +x /usr/bin/zarf
+    yq \
+    zarf
