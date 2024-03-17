@@ -3,18 +3,8 @@
 ##
 domain: tatooine.dev
 
-registryCredentials:
-  - registry: registry1.dso.mil
-    username: "" # set in secrets overlay
-    password: "" # set in secrets overlay
-    email: ""    # this can stay empty
-  - registry: registry.gitlab.com
-    username: "" # set in secrets overlay
-    password: "" # set in secrets overlay
-    email: ""    # this can stay empty
-
 ##
-# SERVICE MESH (Istio, Kiali)
+# SERVICE MESH (Istio, Istio Operator, Kiali)
 ##
 istio:
   enabled: true
@@ -34,7 +24,9 @@ istio:
       global:
         proxy:
           image: istio-proxy
-
+    postInstallHook:
+      image: cgr.dev/chainguard/kubectl
+      tag: latest
 istioOperator:
   enabled: true
   values:
@@ -55,19 +47,21 @@ promtail:
   enabled: false
 
 ##
-# POLICY ENFORCEMENT (Kyverno)
+# POLICY ENFORCEMENT (Kyverno, Kyverno Policies, Kyverno Reporter)
 ##
 kyverno:
-  enabled: true
+  enabled: false
   values:
     image:
      registry: cgr.dev
      repository: chainguard/kyverno
      tag: latest
-    initImage:
-      registry: cgr.dev
-      repository: chainguard/kyvernopre
-      tag: latest
+    admissionController:
+      initContainer:
+        image:
+          registry: cgr.dev
+          repository: chainguard/kyvernopre
+          tag: latest
 
 kyvernoPolicies:
   enabled: false
@@ -99,7 +93,7 @@ kyvernoReporter:
 # MONITORING (Prometheus, Grafana)
 ##
 monitoring:
-  enabled: true
+  enabled: false
   values:
     alertmanager:
       alertmanagerSpec:
@@ -129,6 +123,17 @@ monitoring:
           repository: cgr.dev/chainguard/prometheus
           tag: latest
     prometheusOperator:
+      admissionWebhooks:
+        cleanupProxy:
+          image:
+            registry: cgr.dev
+            repository: chainguard/curl
+            tag: latest
+        patch:
+          image:
+            registry: cgr.dev
+            repository: chainguard/curl
+            tag: latest
       image:
         registry: cgr.dev
         repository: chainguard/prometheus-operator
@@ -184,38 +189,43 @@ tempo:
 neuvector:
   enabled: false
 
+## 
+# ADDONS (Metrics Server)
+##
+addons:
+  metricsServer:
+    enabled: auto
+    values:
+      image:
+        repository: cgr.dev/chainguard/metrics-server
+        tag: latest
+      args:
+        - "--kubelet-insecure-tls"
+
 ##
 # CUSTOM PACKAGES
 ##
 helmRepositories:
-  - name: cosmology-packages
-    repository: "oci://registry.gitlab.com/willswire/cosmology/packages"
-    existingSecret: "private-registry"
+  - name: cosmology-charts
+    repository: "oci://registry.gitlab.com/willswire/cosmology/charts"
     type: "oci"
-  - name: shadows-edge-packages
+    username: ""
+    password: ""
+    email: ""
+  - name: shadows-edge-charts
     repository: "oci://registry.gitlab.com/90cos"
-    existingSecret: "private-registry"
     type: "oci"
+    username: ""
+    password: ""
+    email: ""
 
 packages:
-  gitlab-agent:
-    enabled: true
-    wrapper:
-      enabled: true
-    git:
-      repo: https://gitlab.com/gitlab-org/charts/gitlab-agent.git
-      tag: v1.20.0
-      path: ./
-    values:
-      config:
-        token: "" # set in secrets overlay
-        kasAddress: wss://kas.gitlab.com
   clip:
     enabled: true
     wrapper:
       enabled: true
     helmRepo:
-      repoName: cosmology-packages
+      repoName: cosmology-charts
       chartName: clip
       tag: 0.2.0
     dependsOn:
@@ -233,7 +243,7 @@ packages:
     istio:
       injection: "disabled"
     helmRepo:
-      repoName: shadows-edge-packages
+      repoName: shadows-edge-charts
       chartName: underhill
       tag: '0.0.x-dev'
     dependsOn:

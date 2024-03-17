@@ -1,9 +1,0 @@
-k8s-deploy:
-  stage: deploy
-  image: $CI_REGISTRY_IMAGE/toolbox
-  before_script:
-    - zarf tools kubectl config use-context willswire/cosmology:development
-    - helm registry login $CI_REGISTRY -u gitlab-ci-token -p $CI_JOB_TOKEN
-  script: $CI_PROJECT_DIR/scripts/deploy.sh
-  rules:
-    - when: manual

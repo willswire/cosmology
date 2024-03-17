@@ -1,0 +1,21 @@
+contents:
+  repositories:
+    - '@local packages'
+    - https://dl-cdn.alpinelinux.org/alpine/edge/main
+  packages:
+    - musl
+    - clip@local
+    - ca-certificates-bundle
+accounts:
+  groups:
+    - groupname: nonroot
+      gid: 65532
+  users:
+    - username: nonroot
+      uid: 65532
+  run-as: nonroot
+entrypoint:
+  command: /usr/bin/clip
+archs:
+  - x86_64
+  - aarch64

@@ -1,0 +1,8 @@
+# melange
+melange.rsa
+packages/
+
+# apko
+*.cdx
+*.spdx*
+*.tar
