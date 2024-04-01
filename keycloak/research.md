@@ -1,15 +1,22 @@
 # Running keycloak in a container
 
 ```console
+# you should be in the keycloak folder
+pwd
+
+# generating a keypair in one line
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 3650 -nodes -subj "/C=US/ST=Texas/L=SanAntonio/O=WillsWire/OU=Cosmology/CN=tatooine.dev"
+
+# run tha thing
 docker run \
     --rm \
-    -v /Users/willwalker/Developer/cosmology/keycloak:/kc \
+    -v $PWD:/kc \
     -p 8443:8443 \
     -e KEYCLOAK_ADMIN=admin \
     -e KEYCLOAK_ADMIN_PASSWORD=admin \
     quay.io/keycloak/keycloak:24.0.1 \
     start-dev \
-    --https-certificate-file=/kc/certificate.pem \
+    --https-certificate-file=/kc/cert.pem \
     --https-certificate-key-file=/kc/key.pem \
     --https-client-auth=request \
     --truststore-paths=/kc/dod_ca.pem,/kc/dod_pke_chain.pem
