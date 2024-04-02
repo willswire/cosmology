@@ -1,0 +1,36 @@
+package:
+  name: endlessh
+  version: "1.0"
+  epoch: 0
+  description: "SSH tarpit that slowly sends an endless banner"
+  copyright:
+    - license: Unlicense
+  target-architecture:
+    - x86_64
+    - aarch64
+
+environment:
+  contents:
+    repositories:
+      - https://packages.wolfi.dev/os
+    keyring:
+      - https://packages.wolfi.dev/os/wolfi-signing.rsa.pub
+    packages:
+      - build-base
+      # - busybox
+      # - ca-certificates-bundle
+      - wolfi-base
+
+pipeline:
+  - uses: git-checkout
+    with:
+      repository: https://github.com/skeeto/endlessh.git
+      destination: endlessh
+      tag: "1.0"
+  - uses: autoconf/make
+    with:
+      dir: /home/build/endlessh
+  - uses: autoconf/make-install
+    with:
+      dir: /home/build/endlessh
+  - uses: strip
