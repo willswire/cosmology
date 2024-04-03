@@ -32,7 +32,7 @@ securityContext:
 
 service:
   type: ClusterIP
-  port: 22
+  port: 2222
 
 resources:
   limits:
