@@ -14,5 +14,5 @@ cd src
 melange build melange.yaml --signing-key melange.rsa
 
 # Create and publish the container from the APKs
-apko publish apko.yaml registry.gitlab.com/willswire/cosmology/clip/publisher:0.2.0 -k melange.rsa.pub
+apko publish apko.yaml registry.gitlab.com/willswire/cosmology/clip:1.0 -k melange.rsa.pub
 ```

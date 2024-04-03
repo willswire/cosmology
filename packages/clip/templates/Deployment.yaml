@@ -15,8 +15,8 @@ spec:
     spec:
       serviceAccountName: clip-service-account
       containers:
-      - name: clip-publisher
-        image: registry.gitlab.com/willswire/cosmology/clip/publisher:0.2.0
+      - name: clip
+        image: registry.gitlab.com/willswire/cosmology/clip:1.0
         resources:
           limits:
             memory: "128Mi"

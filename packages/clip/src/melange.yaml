@@ -1,6 +1,6 @@
 package:
   name: clip
-  version: 0.2.0
+  version: "1.0"
   epoch: 0
   description: Cloudflare-Istio Publisher
   copyright:

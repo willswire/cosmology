@@ -358,8 +358,7 @@ addons:
 ##
 helmRepositories:
   - name: cosmology-charts
-    repository: "oci://registry.gitlab.com/willswire/cosmology/charts"
-    type: "oci"
+    repository: "https://gitlab.com/api/v4/projects/47328379/packages/helm/stable"
     username: ""
     password: ""
     email: ""
@@ -378,7 +377,7 @@ packages:
     helmRepo:
       repoName: cosmology-charts
       chartName: clip
-      tag: 0.2.0
+      tag: 0.3.0
     dependsOn:
       - name: istio
         namespace: bigbang
@@ -387,6 +386,17 @@ packages:
         data:
           AUTH_KEY: "" # set in secrets overlay
           ZONE_ID: "" # set in secrets overlay
+  endlessh:
+    enabled: true
+    wrapper:
+      enabled: true
+    helmRepo:
+      repoName: cosmology-charts
+      chartName: endlessh
+      tag: 0.1.0
+    dependsOn:
+      - name: istio
+        namespace: bigbang
   underhill:
     enabled: true
     wrapper:
