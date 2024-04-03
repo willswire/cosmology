@@ -13,15 +13,12 @@ create() {
 }
 
 deploy() {
-    # create and push helm packages
-    pushd packages
-    for package in *; do
-        helm package $package
-        helm push *$package*.tgz "oci://registry.gitlab.com/willswire/cosmology/charts"
-        rm *$package*.tgz
-    done
-    popd
-
+    # Check if SOPS_AGE_KEY env var is set
+    if [ -z "$SOPS_AGE_KEY" ]; then
+        echo "Error: SOPS_AGE_KEY environment variable is not set. Secrets cannot be decrypted."
+        exit 1
+    fi
+    
     # decrypt secrets if they don't exist yet
     if [ ! -f secrets.yaml ];
     then
@@ -36,6 +33,9 @@ deploy() {
 
     # remove the zarf package
     rm zarf-package-*.tar.zst
+
+    # remove the decrypted secrets
+    rm secrets.yaml
 }
 
 destroy() {
