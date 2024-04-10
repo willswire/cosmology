@@ -5,10 +5,10 @@ metadata:
   labels:
     {{- include "endlessh.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: ssh
+    - port: 2222
+      targetPort: 2222
       protocol: TCP
       name: ssh
   selector:

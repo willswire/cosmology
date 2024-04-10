@@ -345,7 +345,7 @@ neuvector:
 ##
 addons:
   metricsServer:
-    enabled: auto
+    enabled: false
     values:
       image:
         repository: cgr.dev/chainguard/metrics-server
@@ -371,9 +371,9 @@ helmRepositories:
 
 packages:
   clip:
-    enabled: true
+    enabled: false
     wrapper:
-      enabled: true
+      enabled: false
     helmRepo:
       repoName: cosmology-charts
       chartName: clip
@@ -387,9 +387,9 @@ packages:
           AUTH_KEY: "" # set in secrets overlay
           ZONE_ID: "" # set in secrets overlay
   endlessh:
-    enabled: true
+    enabled: false
     wrapper:
-      enabled: true
+      enabled: false
     helmRepo:
       repoName: cosmology-charts
       chartName: endlessh
@@ -398,9 +398,9 @@ packages:
       - name: istio
         namespace: bigbang
   underhill:
-    enabled: true
+    enabled: false
     wrapper:
-      enabled: true
+      enabled: false
     istio:
       injection: "disabled"
     helmRepo:

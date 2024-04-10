@@ -7,7 +7,7 @@ metadata:
 data:
     config: |
         # The port on which to listen for new SSH connections.
-        Port {{ .Values.service.port }}
+        Port 2222
 
         # The endless banner is sent one line at a time. This is the delay
         # in milliseconds between individual lines.
