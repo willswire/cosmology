@@ -13,20 +13,23 @@ istio:
       tls:
         mode: MUTUAL
         cert: "" # set in secrets overlay
-        key: ""  # set in secrets overlay
-        ca: ""   # set in secrets overlay
+        key: "" # set in secrets overlay
+        ca: "" # set in secrets overlay
   values:
     hub: cgr.dev/chainguard
     tag: latest
     values:
-      pilot: 
+      pilot:
         image: istio-pilot
       global:
         proxy:
           image: istio-proxy
+        proxy_init:
+          image: istio-proxy
     postInstallHook:
       image: cgr.dev/chainguard/kubectl
       tag: latest
+
 istioOperator:
   enabled: true
   values:
@@ -41,30 +44,101 @@ kiali:
 # LOGGING (Loki, Promtail)
 ##
 loki:
-  enabled: false
+  enabled: true
+  strategy: "monolith"
+  values:
+    minio:
+      enabled: false
+    loki:
+      image:
+        registry: cgr.dev
+        repository: chainguard/loki
+        tag: latest
+    gateway:
+      image:
+        registry: cgr.dev
+        repository: chainguard/nginx
+        tag: latest
+    sidecar:
+      image:
+        registry: cgr.dev
+        repository: chainguard/k8s-sidecar
+        tag: latest
 
 promtail:
-  enabled: false
+  enabled: true
+  values:
+    image:
+      registry: cgr.dev
+      repository: chainguard/promtail
+      tag: latest
+    sidecar:
+      configReloader:
+        image:
+          registry: cgr.dev
+          repository: chainguard/configmap-reload
+          tag: latest
 
 ##
 # POLICY ENFORCEMENT (Kyverno, Kyverno Policies, Kyverno Reporter)
 ##
 kyverno:
-  enabled: false
+  enabled: true
   values:
     image:
-     registry: cgr.dev
-     repository: chainguard/kyverno
-     tag: latest
+      registry: cgr.dev
+      repository: chainguard/kyverno
+      tag: latest
     admissionController:
       initContainer:
         image:
           registry: cgr.dev
           repository: chainguard/kyvernopre
           tag: latest
+      container:
+        image:
+          registry: cgr.dev
+          repository: chainguard/kyverno
+          tag: latest
+    webhooksCleanup:
+      image:
+        registry: cgr.dev
+        repository: chainguard/kubectl
+        tag: latest-dev
+    policyReportsCleanup:
+      image:
+        registry: cgr.dev
+        repository: chainguard/kubectl
+        tag: latest-dev
+    backgroundController:
+      image:
+        registry: cgr.dev
+        repository: chainguard/kyverno-background-controller
+        tag: latest
+    cleanupController:
+      image:
+        registry: cgr.dev
+        repository: chainguard/kyverno-cleanup-controller
+        tag: latest
+    reportsController:
+      image:
+        registry: cgr.dev
+        repository: chainguard/kyverno-reports-controller
+        tag: latest
+    cleanupJobs:
+      admissionReports:
+        image:
+          registry: cgr.dev
+          repository: chainguard/kubectl
+          tag: latest-dev
+      clusterAdmissionReports:
+        image:
+          registry: cgr.dev
+          repository: chainguard/kubectl
+          tag: latest-dev
 
 kyvernoPolicies:
-  enabled: false
+  enabled: true
   values:
     policies:
       disallow-image-tags:
@@ -77,6 +151,9 @@ kyvernoPolicies:
         validationFailureAction: audit
       restrict-image-registries:
         validationFailureAction: audit
+        parameters:
+          allow:
+            - cgr.dev
       disallow-host-namespaces:
         validationFailureAction: audit
       disallow-privileged-containers:
@@ -85,21 +162,31 @@ kyvernoPolicies:
         validationFailureAction: audit
       restrict-host-path-mount-pv:
         validationFailureAction: audit
+    waitforready:
+      image:
+        repository: cgr.dev/chainguard/kubectl
+        tag: latest-dev
 
 kyvernoReporter:
-  enabled: false
+  enabled: true
+  values:
+    image:
+      registry: cgr.dev
+      repository: chainguard/kyverno-policy-reporter
+      tag: latest
 
 ##
 # MONITORING (Prometheus, Grafana)
 ##
 monitoring:
-  enabled: false
+  enabled: true
   values:
     alertmanager:
       alertmanagerSpec:
         image:
-          repository: cgr.dev/chainguard/prometheus-alertmanager
+          repository: chainguard/alertmanager
           tag: latest
+          registry: cgr.dev
     grafana:
       sidecar:
         image:
@@ -112,6 +199,13 @@ monitoring:
           requests:
             cpu: 100m
             memory: 100Mi
+      image:
+        registry: cgr.dev
+        repository: chainguard/grafana
+        tag: latest
+      downloadDashboardsImage:
+        repository: cgr.dev/chainguard/curl
+        tag: latest-dev
     kube-state-metrics:
       image:
         registry: cgr.dev
@@ -120,8 +214,9 @@ monitoring:
     prometheus:
       prometheusSpec:
         image:
-          repository: cgr.dev/chainguard/prometheus
+          repository: chainguard/prometheus
           tag: latest
+          registry: cgr.dev
     prometheusOperator:
       admissionWebhooks:
         cleanupProxy:
@@ -132,8 +227,9 @@ monitoring:
         patch:
           image:
             registry: cgr.dev
-            repository: chainguard/curl
-            tag: latest
+            repository: chainguard/kube-webhook-certgen
+            tag: latest@sha256:fc0791df5584c2cae64ecfdeb8ae98f38d07822939f80c0bd7379892bc90e6e7
+        enabled: true
       image:
         registry: cgr.dev
         repository: chainguard/prometheus-operator
@@ -147,14 +243,20 @@ monitoring:
           registry: cgr.dev
           repository: chainguard/prometheus-config-reloader
           tag: latest
-    ## mismatching node exporter version tag from chainguard (semverCompare issue)
-    ## https://github.com/prometheus-community/helm-charts/blob/6df9ef36a6eea543fef3188e1357e6d63287efd5/charts/prometheus-node-exporter/templates/daemonset.yaml#L52
-    ## requires a re-tagged image with a semver compatible value
+        thanosImage:
+          registry: cgr.dev
+          repository: chainguard/thanos
+          tag: latest
+        kubectlImage:
+          registry: cgr.dev
+          repository: chainguard/kubectl
+          tag: latest-dev
     prometheus-node-exporter:
       image:
-        registry: registry.gitlab.com
-        repository: willswire/cosmology/chainguard/prometheus-node-exporter
-        tag: v1.6.1
+        registry: cgr.dev
+        repository: chainguard/prometheus-node-exporter
+        tag: latest
+      version: 1.7.0
     thanosRuler:
       thanosRulerSpec:
         image:
@@ -163,11 +265,11 @@ monitoring:
           tag: latest
 
 grafana:
-  enabled: false
+  enabled: true
   values:
     sidecar:
       image:
-        repository: cgr.dev/chainguard/k8s-sidecar
+        repository: chainguard/k8s-sidecar
         tag: latest
       resources:
         limits:
@@ -176,6 +278,14 @@ grafana:
         requests:
           cpu: 100m
           memory: 100Mi
+    global:
+      imageRegistry: cgr.dev
+    image:
+      repository: chainguard/grafana
+      tag: latest
+    downloadDashboardsImage:
+      repository: chainguard/curl
+      tag: latest-dev
 
 ##
 # DISTRIBUTED TRACING (Tempo)
@@ -188,6 +298,47 @@ tempo:
 ##
 neuvector:
   enabled: false
+  values:
+    registry: cgr.dev
+    tag: latest
+    global:
+      azure:
+        images:
+          controller:
+            registry: cgr.dev
+            image: chainguard/neuvector-controller
+            digest: latest
+          manager:
+            registry: cgr.dev
+            image: chainguard/neuvector-manager
+            digest: latest
+          scanner:
+            registry: cgr.dev
+            image: chainguard/neuvector-scanner
+            digest: latest
+          enforcer:
+            registry: cgr.dev
+            image: chainguard/neuvector-enforcer
+            digest: latest
+    controller:
+      image:
+        repository: chainguard/neuvector-controller
+    enforcer:
+      image:
+        repository: chainguard/neuvector-enforcer
+    manager:
+      image:
+        repository: chainguard/neuvector-manager
+    cve:
+      adapter:
+        image:
+          repository: chainguard/neuvector-registry-adapter
+      updater:
+        image:
+          repository: ironbank/big-bang/base
+      scanner:
+        image:
+          repository: chainguard/neuvector-scanner
 
 ## 
 # ADDONS (Metrics Server)
@@ -235,7 +386,7 @@ packages:
       - name: cloudflare-credentials
         data:
           AUTH_KEY: "" # set in secrets overlay
-          ZONE_ID: ""  # set in secrets overlay
+          ZONE_ID: "" # set in secrets overlay
   underhill:
     enabled: true
     wrapper:
