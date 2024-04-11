@@ -16,7 +16,7 @@ deploy() {
     # Check if SOPS_AGE_KEY env var is set
     if [ -z "$SOPS_AGE_KEY" ]; then
         echo "Error: SOPS_AGE_KEY environment variable is not set. Secrets cannot be decrypted."
-        exit 1
+        return 1
     fi
     
     # decrypt secrets if they don't exist yet

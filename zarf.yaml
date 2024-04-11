@@ -11,7 +11,7 @@ components:
     required: true
     extensions:
       bigbang:
-        version: 2.20.0
+        version: 2.24.0
         fluxPatchFiles:
           - patches/flux/helm-controller.yaml
           - patches/flux/source-controller.yaml
